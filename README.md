@@ -38,6 +38,14 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - **Framer Motion**
 - **pnpm**
 
+## Data Layer
+
+- **API**: GitHub REST API (`api.github.com/repositories`) — public, no auth required
+- **Caching**: `next: { revalidate: 3600 }` — 1-hour revalidation window
+- **Validation**: Runtime type guards (`unknown` → typed) before transformation
+- **Metrics**: Deterministic — derived from GitHub's `stargazers_count`, `forks_count`, `open_issues_count`
+- **Note**: Resource metrics are demo transformations of GitHub repository data, not real cloud infrastructure metrics
+
 ## License
 
 MIT
