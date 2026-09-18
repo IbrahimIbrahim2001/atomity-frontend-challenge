@@ -1,4 +1,5 @@
 @import "tailwindcss";
+
 @import "../styles/tokens.css";
 
 body {
@@ -16,4 +17,57 @@ body {
 
 @utility metric-value {
   @apply font-semibold text-fg;
+}
+
+@layer components {
+  .resource-row {
+    @apply border-b border-border transition-colors;
+  }
+
+  .resource-row:hover {
+    background: var(--color-bg);
+  }
+
+  .resource-cell {
+    @apply px-4 py-3 text-right text-fg;
+  }
+
+  .resource-label {
+    @apply px-4 py-3 font-semibold text-fg;
+  }
+
+  .resource-efficiency {
+    @apply px-4 py-3 text-right font-semibold text-success;
+  }
+
+  .resource-total {
+    @apply px-4 py-3 text-right font-bold text-fg;
+  }
+
+  .resource-table {
+    @apply min-w-150 w-full text-sm;
+  }
+
+  .resource-table-head {
+    background: var(--color-bg);
+  }
+
+  .resource-table-header {
+    @apply px-4 py-3 font-semibold text-muted;
+  }
+
+  .resource-table-header-right {
+    @apply px-4 py-3 text-right font-semibold text-muted;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

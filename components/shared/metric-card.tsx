@@ -1,7 +1,9 @@
+import { NumberTicker } from "../ui/number-ticker";
+
 type MetricCardProps = {
-  label: string
-  value: string
-}
+  label: string;
+  value: number;
+};
 
 export function MetricCard({ label, value }: MetricCardProps) {
   return (
@@ -10,7 +12,7 @@ export function MetricCard({ label, value }: MetricCardProps) {
         <div className="h-4 w-4 rounded-full bg-success" />
         <span className="text-sm text-muted">{label}</span>
       </div>
-      <p className="text-3xl font-bold text-fg">{value}</p>
+      <NumberTicker value={value} className="text-2xl font-bold text-fg" />
     </div>
-  )
+  );
 }

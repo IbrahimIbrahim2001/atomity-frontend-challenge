@@ -1,47 +1,39 @@
-"use client"
+"use client";
 
-import type { ResourceMetrics } from "@/types/optimization"
+import type { ResourceMetrics } from "@/types/optimization";
+import { motion } from "motion/react";
 
-import { motion } from "motion/react"
+import { barVariants, fadeVariants, itemVariants } from "@/lib/animations";
 
-import {
-  barVariants,
-  fadeVariants,
-} from "@/lib/animations"
+import { NumberTicker } from "../ui/number-ticker";
 
 interface ResourceBarProps {
-  cluster: ResourceMetrics
-  index: number
-  maxTotal: number
+  cluster: ResourceMetrics;
+  index: number;
+  maxTotal: number;
 }
 
-export function ResourceBar({
-  cluster,
-  index,
-  maxTotal,
-}: ResourceBarProps) {
-  const height = Math.max(
-    (cluster.total / maxTotal) * 100,
-    4,
-  )
+export function ResourceBar({ cluster, index, maxTotal }: ResourceBarProps) {
+  const height = Math.max((cluster.total / maxTotal) * 100, 4);
 
   return (
-    <div className="flex h-full flex-1 flex-col items-center gap-2">
-      <motion.span
-        className="text-sm font-semibold text-fg"
-        variants={fadeVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {cluster.total}
-      </motion.span>
+    <motion.div
+      variants={itemVariants}
+      className="flex h-full min-w-0 flex-col items-center gap-2"
+    >
+      <NumberTicker
+        value={cluster.total}
+        className="text-xs font-semibold text-fg sm:text-sm"
+      />
 
-      <div className="flex h-48 w-full items-end">
+      <div className="relative flex h-48 w-full items-end">
+        {/* Background track */}
+        <div className="absolute inset-x-0 bottom-0 h-full rounded-t-lg bg-muted/20" />
+
+        {/* Resource bar */}
         <motion.div
-          className="w-full origin-bottom rounded-t-lg bg-success"
           variants={barVariants}
-          initial="hidden"
-          animate="visible"
+          className="relative z-10 w-full origin-bottom rounded-t-lg bg-success"
           style={{
             height: `${height}%`,
           }}
@@ -49,13 +41,11 @@ export function ResourceBar({
       </div>
 
       <motion.span
-        className="text-sm font-semibold text-fg"
         variants={fadeVariants}
-        initial="hidden"
-        animate="visible"
+        className="text-sm font-semibold text-fg"
       >
         Cluster {String.fromCharCode(65 + index)}
       </motion.span>
-    </div>
-  )
+    </motion.div>
+  );
 }

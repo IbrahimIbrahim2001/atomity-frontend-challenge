@@ -24,10 +24,7 @@ export default function Loading() {
 
           <div className="flex h-48 items-end gap-3">
             {Array.from({ length: 4 }).map((_, index) => (
-              <div
-                key={index}
-                className="flex flex-1 items-end"
-              >
+              <div key={index} className="flex flex-1 items-end">
                 <div
                   className="w-full rounded-t-lg bg-muted/30"
                   style={{
@@ -52,5 +49,5 @@ export default function Loading() {
         </div>
       </div>
     </main>
-  )
+  );
 }

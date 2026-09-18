@@ -51,15 +51,30 @@
 
 @media (prefers-color-scheme: light) {
   :root {
+    /* Background */
     --color-bg: #f6f8fa;
+
+    /* Surface */
     --color-surface: #ffffff;
+
+    /* Foreground / Text */
     --color-fg: #1f2328;
+
+    /* Muted text */
     --color-muted: #656d76;
+
+    /* Border */
     --color-border: #d0d7de;
+
+    /* Accent */
     --color-accent: #0969da;
+
+    /* Semantic */
     --color-success: #1a7f37;
     --color-warning: #9a6700;
     --color-error: #cf222e;
+
+    /* Shadows */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
@@ -103,6 +118,7 @@
   --font-size-lg: var(--font-size-lg);
   --font-size-xl: var(--font-size-xl);
   --font-size-2xl: var(--font-size-2xl);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
