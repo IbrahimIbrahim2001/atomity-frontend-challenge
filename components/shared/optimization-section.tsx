@@ -1,37 +1,33 @@
-import type { OptimizationSectionProps } from "@/types/optimization"
-
 import {
   aggregateCluster,
+  aggregateResources,
   estimateResources,
   getClusters,
 } from "@/lib/resource-calculations"
 
 import { MetricCard } from "./metric-card"
 import { ResourceList } from "./resource-list"
+import { Repository } from "@/types/repository"
+import { ResourceBar } from "./resource-bar"
+
+interface OptimizationSectionProps {
+  repositories: Repository[]
+}
+
 
 export function OptimizationSection({
   repositories,
 }: OptimizationSectionProps) {
-  const clusters = getClusters(repositories)
+   const clusters = getClusters(repositories)
   const clusterData = clusters.map(aggregateCluster)
   const allMetrics = repositories.map(estimateResources)
+  const totalResources = aggregateResources(allMetrics)
 
-  const totalCpu = allMetrics.reduce((sum, metric) => sum + metric.cpu, 0)
-  const totalRam = allMetrics.reduce((sum, metric) => sum + metric.ram, 0)
-  const totalStorage = allMetrics.reduce(
-    (sum, metric) => sum + metric.storage,
-    0,
-  )
-  const totalNetwork = allMetrics.reduce(
-    (sum, metric) => sum + metric.network,
-    0,
-  )
-  const totalGpu = allMetrics.reduce((sum, metric) => sum + metric.gpu, 0)
-
-  const maxTotal = Math.max(
+    const maxTotal = Math.max(
     ...clusterData.map((cluster) => cluster.total),
     1,
   )
+  
 
   return (
     <section className="flex min-h-screen justify-center bg-background p-4 sm:p-6">
@@ -65,34 +61,15 @@ export function OptimizationSection({
 
         <div className="space-y-4">
           <div className="flex h-48 items-end gap-3">
-            {clusterData.map((cluster, index) => {
-              const height = Math.round(
-                (cluster.total / maxTotal) * 100,
-              )
+          {clusterData.map((cluster, index) => (
+              <ResourceBar
+                key={index}
+                cluster={cluster}
+                index={index}
+                maxTotal={maxTotal}
+              />
+          ))}
 
-              return (
-                <div
-                  key={index}
-                  className="flex flex-1 flex-col items-center gap-2"
-                >
-                  <span className="text-sm font-semibold text-fg">
-                    {cluster.total}
-                  </span>
-
-                  <div
-                    className="w-full rounded-t-lg bg-success transition-all"
-                    style={{
-                      height: `${height}%`,
-                      minHeight: "8px",
-                    }}
-                  />
-
-                  <span className="text-sm font-semibold text-fg">
-                    Cluster {String.fromCharCode(65 + index)}
-                  </span>
-                </div>
-              )
-            })}
           </div>
         </div>
 
@@ -105,16 +82,16 @@ export function OptimizationSection({
         {/* Metrics */}
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
-          <MetricCard label="CPU" value={String(Math.round(totalCpu))} />
-          <MetricCard label="GPU" value={String(Math.round(totalGpu))} />
-          <MetricCard label="RAM" value={String(Math.round(totalRam))} />
+          <MetricCard label="CPU" value={String(totalResources.cpu)} />
+          <MetricCard label="GPU" value={String(totalResources.gpu)} />
+          <MetricCard label="RAM" value={String(totalResources.ram)} />
           <MetricCard
             label="Storage"
-            value={String(Math.round(totalStorage))}
+            value={String(totalResources.storage)}
           />
           <MetricCard
             label="Network"
-            value={String(Math.round(totalNetwork))}
+            value={String(totalResources.network)}
           />
         </div>
 

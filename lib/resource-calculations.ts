@@ -15,7 +15,7 @@ function logScale(value: number): number {
   return Math.log10(Math.max(value, 1))
 }
 
-export function getClusters(repositories: Repository[]) {
+export function getClusters(repositories: Repository[]): Repository[][] {
   const clusters: Repository[][] = Array.from(
     { length: CLUSTER_COUNT },
     () => [],
@@ -28,7 +28,9 @@ export function getClusters(repositories: Repository[]) {
   return clusters
 }
 
-export function estimateResources(repo: Repository): ResourceMetrics {
+export function estimateResources(
+  repo: Repository,
+): ResourceMetrics {
   const size = Math.max(safeNumber(repo.size), 1)
   const stars = Math.max(safeNumber(repo.stars), 1)
   const watchers = Math.max(safeNumber(repo.watchersCount), 1)
@@ -105,7 +107,15 @@ export function estimateResources(repo: Repository): ResourceMetrics {
 export function aggregateCluster(
   repos: Repository[],
 ): ResourceMetrics {
-  if (repos.length === 0) {
+  const metrics = repos.map(estimateResources)
+
+  return aggregateResources(metrics)
+}
+
+export function aggregateResources(
+  metrics: ResourceMetrics[],
+): ResourceMetrics {
+  if (metrics.length === 0) {
     return {
       cpu: 0,
       ram: 0,
@@ -117,24 +127,49 @@ export function aggregateCluster(
     }
   }
 
-  const metrics = repos.map(estimateResources)
+  const cpu = metrics.reduce(
+    (sum, metric) => sum + metric.cpu,
+    0,
+  )
+
+  const ram = metrics.reduce(
+    (sum, metric) => sum + metric.ram,
+    0,
+  )
+
+  const storage = metrics.reduce(
+    (sum, metric) => sum + metric.storage,
+    0,
+  )
+
+  const network = metrics.reduce(
+    (sum, metric) => sum + metric.network,
+    0,
+  )
+
+  const gpu = metrics.reduce(
+    (sum, metric) => sum + metric.gpu,
+    0,
+  )
+
+  const efficiency =
+    metrics.reduce(
+      (sum, metric) => sum + metric.efficiency,
+      0,
+    ) / metrics.length
+
+  const total = metrics.reduce(
+    (sum, metric) => sum + metric.total,
+    0,
+  )
 
   return {
-    cpu: safeNumber(metrics.reduce((sum, m) => sum + m.cpu, 0)),
-    ram: safeNumber(metrics.reduce((sum, m) => sum + m.ram, 0)),
-    storage: safeNumber(
-      metrics.reduce((sum, m) => sum + m.storage, 0),
-    ),
-    network: safeNumber(
-      metrics.reduce((sum, m) => sum + m.network, 0),
-    ),
-    gpu: safeNumber(metrics.reduce((sum, m) => sum + m.gpu, 0)),
-    efficiency: safeNumber(
-      Math.round(
-        metrics.reduce((sum, m) => sum + m.efficiency, 0) /
-          metrics.length,
-      ),
-    ),
-    total: safeNumber(metrics.reduce((sum, m) => sum + m.total, 0)),
+    cpu: safeNumber(cpu),
+    ram: safeNumber(ram),
+    storage: safeNumber(storage),
+    network: safeNumber(network),
+    gpu: safeNumber(gpu),
+    efficiency: safeNumber(Math.round(efficiency)),
+    total: safeNumber(total),
   }
 }

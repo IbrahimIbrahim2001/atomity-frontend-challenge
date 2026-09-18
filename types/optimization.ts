@@ -1,4 +1,3 @@
-import { Repository } from "./repository"
 
 export interface ResourceMetrics {
   cpu: number
@@ -13,8 +12,4 @@ export interface ResourceMetrics {
 export interface ResourceCluster {
   cluster: ResourceMetrics
   label: string
-}
-
-export interface OptimizationSectionProps {
-  repositories: Repository[]
 }
