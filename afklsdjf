@@ -1,0 +1,163 @@
+warning: LF will be replaced by CRLF in app/page.tsx.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in components/shared/metric-card.tsx.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in components/shared/optimization-section.tsx.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in components/shared/resource-list.tsx.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in components/shared/resource-row.tsx.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in data/github.ts.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in types/repository.ts.
+The file will have its original line endings in your working directory
+[1mdiff --git a/app/page.tsx b/app/page.tsx[m
+[1mindex 301f88b..f8af99a 100644[m
+[1m--- a/app/page.tsx[m
+[1m+++ b/app/page.tsx[m
+[36m@@ -1,7 +1,12 @@[m
+[31m-export default function Home() {[m
+[32m+[m[32mimport { OptimizationSection } from "@/components/shared/optimization-section"[m
+[32m+[m[32mimport { getRepositories } from "@/data/github"[m
+[32m+[m
+[32m+[m[32mexport default async function Home() {[m
+[32m+[m[32m  const repositories = await getRepositories()[m
+[32m+[m
+   return ([m
+[31m-    <main className="flex min-h-screen items-center justify-center bg-background text-foreground">[m
+[31m-      <h1 className="text-2xl font-bold">Cloud Resource Intelligence</h1>[m
+[32m+[m[32m    <main>[m
+[32m+[m[32m      <OptimizationSection repositories={repositories} />[m
+     </main>[m
+[31m-  );[m
+[32m+[m[32m  )[m
+ }[m
+[1mdiff --git a/components/shared/metric-card.tsx b/components/shared/metric-card.tsx[m
+[1mindex 10f4bd4..e05b614 100644[m
+[1m--- a/components/shared/metric-card.tsx[m
+[1m+++ b/components/shared/metric-card.tsx[m
+[36m@@ -5,9 +5,12 @@[m [mtype MetricCardProps = {[m
+ [m
+ export function MetricCard({ label, value }: MetricCardProps) {[m
+   return ([m
+[31m-    <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">[m
+[31m-      <p className="metric-label">{label}</p>[m
+[31m-      <p className="text-xl font-bold text-fg">{value}</p>[m
+[32m+[m[32m    <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">[m
+[32m+[m[32m      <div className="mb-3 flex items-center gap-2">[m
+[32m+[m[32m        <div className="h-4 w-4 rounded-full bg-success" />[m
+[32m+[m[32m        <span className="text-sm text-muted">{label}</span>[m
+[32m+[m[32m      </div>[m
+[32m+[m[32m      <p className="text-3xl font-bold text-fg">{value}</p>[m
+     </div>[m
+   )[m
+ }[m
+[1mdiff --git a/components/shared/optimization-section.tsx b/components/shared/optimization-section.tsx[m
+[1mindex 40c4bcd..6b04453 100644[m
+[1m--- a/components/shared/optimization-section.tsx[m
+[1m+++ b/components/shared/optimization-section.tsx[m
+[36m@@ -1,20 +1,124 @@[m
+[31m-import type { Repository } from "@/types/repository"[m
+[32m+[m[32mimport type { OptimizationSectionProps } from "@/types/optimization"[m
+[32m+[m
+[32m+[m[32mimport {[m
+[32m+[m[32m  aggregateCluster,[m
+[32m+[m[32m  estimateResources,[m
+[32m+[m[32m  getClusters,[m
+[32m+[m[32m} from "@/lib/resource-calculations"[m
+[32m+[m
+ import { MetricCard } from "./metric-card"[m
+ import { ResourceList } from "./resource-list"[m
+ [m
+[31m-export function OptimizationSection({ repositories }: { repositories: Repository[] }) {[m
+[31m-  const totalRepositories = repositories.length[m
+[31m-  const totalStars = repositories.reduce((sum, r) => sum + r.stars, 0)[m
+[31m-  const totalForks = repositories.reduce((sum, r) => sum + r.forks, 0)[m
+[32m+[m[32mexport function OptimizationSection({[m
+[32m+[m[32m  repositories,[m
+[32m+[m[32m}: OptimizationSectionProps) {[m
+[32m+[m[32m  const clusters = getClusters(repositories)[m
+[32m+[m[32m  const clusterData = clusters.map(aggregateCluster)[m
+[32m+[m[32m  const allMetrics = repositories.map(estimateResources)[m
+[32m+[m
+[32m+[m[32m  const totalCpu = allMetrics.reduce((sum, metric) => sum + metric.cpu, 0)[m
+[32m+[m[32m  const totalRam = allMetrics.reduce((sum, metric) => sum + metric.ram, 0)[m
+[32m+[m[32m  const totalStorage = allMetrics.reduce([m
+[32m+[m[32m    (sum, metric) => sum + metric.storage,[m
+[32m+[m[32m    0,[m
+[32m+[m[32m  )[m
+[32m+[m[32m  const totalNetwork = allMetrics.reduce([m
+[32m+[m[32m    (sum, metric) => sum + metric.network,[m
+[32m+[m[32m    0,[m
+[32m+[m[32m  )[m
+[32m+[m[32m  const totalGpu = allMetrics.reduce((sum, metric) => sum + metric.gpu, 0)[m
+[32m+[m
+[32m+[m[32m  const maxTotal = Math.max([m
+[32m+[m[32m    ...clusterData.map((cluster) => cluster.total),[m
+[32m+[m[32m    1,[m
+[32m+[m[32m  )[m
+ [m
+   return ([m
+[31m-    <section className="space-y-6">[m
+[31m-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">[m
+[31m-        <MetricCard label="Repositories" value={String(totalRepositories)} />[m
+[31m-        <MetricCard label="Total Stars" value={String(totalStars)} />[m
+[31m-        <MetricCard label="Total Forks" value={String(totalForks)} />[m
+[32m+[m[32m    <section className="flex min-h-screen justify-center bg-background p-4 sm:p-6">[m
+[32m+[m[32m      <div className="w-full max-w-5xl space-y-6 rounded-2xl border border-border bg-surface p-8 shadow-sm">[m
+[32m+[m
+[32m+[m[32m        {/* Header */}[m
+[32m+[m
+[32m+[m[32m        <div className="flex items-center justify-between">[m
+[32m+[m[32m          <div>[m
+[32m+[m[32m            <h2 className="text-2xl font-bold text-fg">[m
+[32m+[m[32m              Cloud Resource Optimization[m
+[32m+[m[32m            </h2>[m
+[32m+[m
+[32m+[m[32m            <p className="mt-1 text-sm text-muted">[m
+[32m+[m[32m              Last 30 Days · Cluster[m
+[32m+[m[32m            </p>[m
+[32m+[m[32m          </div>[m
+[32m+[m
+[32m+[m[32m          <div className="flex items-center gap-2">[m
+[32m+[m[32m            <span className="text-xs text-muted">[m
+[32m+[m[32m              Last 30 Days[m
+[32m+[m[32m            </span>[m
+[32m+[m
+[32m+[m[32m            <span className="rounded-full bg-success px-3 py-1 text-xs font-semibold text-white">[m
+[32m+[m[32m              Cluster[m
+[32m+[m[32m            </span>[m
+[32m+[m[32m          </div>[m
+[32m+[m[32m        </div>[m
+[32m+[m
+[32m+[m[32m        {/* Chart */}[m
+[32m+[m
+[32m+[m[32m        <div className="space-y-4">[m
+[32m+[m[32m          <div className="flex h-48 items-end gap-3">[m
+[32m+[m[32m            {clusterData.map((cluster, index) => {[m
+[32m+[m[32m              const height = Math.round([m
+[32m+[m[32m                (cluster.total / maxTotal) * 100,[m
+[32m+[m[32m              )[m
+[32m+[m
+[32m+[m[32m              return ([m
+[32m+[m[32m                <div[m
+[32m+[m[32m                  key={index}[m
+[32m+[m[32m                  className="flex flex-1 flex-col items-center gap-2"[m
+[32m+[m[32m                >[m
+[32m+[m[32m                  <span className="text-sm font-semibold text-fg">[m
+[32m+[m[32m                    {cluster.total}[m
+[32m+[m[32m                  </span>[m
+[32m+[m
+[32m+[m[32m                  <div[m
+[32m+[m[32m                    className="w-full rounded-t-lg bg-success transition-all"[m
+[32m+[m[32m                    style={{[m
+[32m+[m[32m                      height: `${height}%`,[m
+[32m+[m[32m                      minHeight: "8px",[m
+[32m+[m[32m                    }}[m
+[32m+[m[32m                  />[m
+[32m+[m
+[32m+[m[32m                  <span className="text-sm font-semibold text-fg">[m
+[32m+[m[32m                    Cluster {String.fromCharCode(65 + index)}[m
+[32m+[m[32m                  </span>[m
+[32m+[m[32m                </div>

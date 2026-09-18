@@ -12,6 +12,11 @@ interface GitHubRepository {
   stargazers_count: number
   forks_count: number
   open_issues_count: number
+  size: number
+  watchers_count: number
+  fork: boolean
+  created_at: string
+  updated_at: string
 }
 
 export const getRepositories = async (): Promise<Repository[]> => {
@@ -35,5 +40,10 @@ export const getRepositories = async (): Promise<Repository[]> => {
     stars: repo.stargazers_count,
     forks: repo.forks_count,
     openIssues: repo.open_issues_count,
+    size: repo.size ?? 0,
+    watchersCount: repo.watchers_count ?? 0,
+    fork: repo.fork ?? false,
+    createdAt: repo.created_at ?? "",
+    updatedAt: repo.updated_at ?? "",
   }))
 }

@@ -1,7 +1,12 @@
-export default function Home() {
+import { OptimizationSection } from "@/components/shared/optimization-section"
+import { getRepositories } from "@/data/github"
+
+export default async function Home() {
+  const repositories = await getRepositories()
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background text-foreground">
-      <h1 className="text-2xl font-bold">Cloud Resource Intelligence</h1>
+    <main>
+      <OptimizationSection repositories={repositories} />
     </main>
-  );
+  )
 }
