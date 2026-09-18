@@ -5,3 +5,15 @@ body {
   background: var(--color-bg);
   color: var(--color-fg);
 }
+
+@utility text-meta {
+  @apply text-sm text-muted;
+}
+
+@utility metric-label {
+  @apply text-xs text-muted;
+}
+
+@utility metric-value {
+  @apply font-semibold text-fg;
+}
