@@ -1,19 +1,24 @@
+"use client"
+
 import {
   aggregateCluster,
   aggregateResources,
   estimateResources,
   getClusters,
 } from "@/lib/resource-calculations"
-
 import { MetricCard } from "./metric-card"
 import { ResourceList } from "./resource-list"
 import { Repository } from "@/types/repository"
 import { ResourceBar } from "./resource-bar"
+import {
+  containerVariants,
+  itemVariants,
+} from "@/lib/animations"
+import { motion } from "motion/react"
 
 interface OptimizationSectionProps {
   repositories: Repository[]
 }
-
 
 export function OptimizationSection({
   repositories,
@@ -27,7 +32,6 @@ export function OptimizationSection({
     ...clusterData.map((cluster) => cluster.total),
     1,
   )
-  
 
   return (
     <section className="flex min-h-screen justify-center bg-background p-4 sm:p-6">
@@ -60,7 +64,10 @@ export function OptimizationSection({
         {/* Chart */}
 
         <div className="space-y-4">
-          <div className="flex h-48 items-end gap-3">
+          <motion.div className="flex h-48 items-end gap-3"
+           variants={containerVariants}
+  initial="hidden"
+  animate="visible">
           {clusterData.map((cluster, index) => (
               <ResourceBar
                 key={index}
@@ -70,7 +77,7 @@ export function OptimizationSection({
               />
           ))}
 
-          </div>
+          </motion.div>
         </div>
 
         {/* Resource table */}
@@ -81,19 +88,39 @@ export function OptimizationSection({
 
         {/* Metrics */}
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
-          <MetricCard label="CPU" value={String(totalResources.cpu)} />
-          <MetricCard label="GPU" value={String(totalResources.gpu)} />
-          <MetricCard label="RAM" value={String(totalResources.ram)} />
+        <motion.div
+          className="grid grid-cols-2 gap-4 sm:grid-cols-5"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          
+          <motion.div variants={itemVariants}>
+              <MetricCard label="CPU" value={String(totalResources.cpu)}  />
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            <MetricCard label="GPU" value={String(totalResources.gpu)} />
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            <MetricCard label="RAM" value={String(totalResources.ram)} />
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            
           <MetricCard
             label="Storage"
             value={String(totalResources.storage)}
-          />
+            />
+            </motion.div>
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <motion.div variants={itemVariants}>
+              
           <MetricCard
             label="Network"
             value={String(totalResources.network)}
-          />
-        </div>
+            />
+            </motion.div>
+            </div>
+        </motion.div>
 
       </div>
     </section>

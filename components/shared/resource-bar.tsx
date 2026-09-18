@@ -1,4 +1,13 @@
+"use client"
+
 import type { ResourceMetrics } from "@/types/optimization"
+
+import { motion } from "motion/react"
+
+import {
+  barVariants,
+  fadeVariants,
+} from "@/lib/animations"
 
 interface ResourceBarProps {
   cluster: ResourceMetrics
@@ -11,27 +20,42 @@ export function ResourceBar({
   index,
   maxTotal,
 }: ResourceBarProps) {
-  const height = Math.round(
+  const height = Math.max(
     (cluster.total / maxTotal) * 100,
+    4,
   )
 
   return (
-    <div className="flex flex-1 flex-col items-center gap-2">
-      <span className="text-sm font-semibold text-fg">
+    <div className="flex h-full flex-1 flex-col items-center gap-2">
+      <motion.span
+        className="text-sm font-semibold text-fg"
+        variants={fadeVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {cluster.total}
-      </span>
+      </motion.span>
 
-      <div
-        className="w-full rounded-t-lg bg-success transition-all"
-        style={{
-          height: `${height}%`,
-          minHeight: "8px",
-        }}
-      />
+      <div className="flex h-48 w-full items-end">
+        <motion.div
+          className="w-full origin-bottom rounded-t-lg bg-success"
+          variants={barVariants}
+          initial="hidden"
+          animate="visible"
+          style={{
+            height: `${height}%`,
+          }}
+        />
+      </div>
 
-      <span className="text-sm font-semibold text-fg">
+      <motion.span
+        className="text-sm font-semibold text-fg"
+        variants={fadeVariants}
+        initial="hidden"
+        animate="visible"
+      >
         Cluster {String.fromCharCode(65 + index)}
-      </span>
+      </motion.span>
     </div>
   )
 }

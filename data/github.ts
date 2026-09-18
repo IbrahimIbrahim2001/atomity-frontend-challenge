@@ -21,11 +21,18 @@ interface GitHubRepository {
 }
 
 export const getRepositories = async (): Promise<Repository[]> => {
-   "use cache"
+  "use cache"
 
   cacheLife("hours")
 
-  const response = await fetch(GITHUB_API_URL)
+  const response = await fetch(GITHUB_API_URL, {
+     headers: {
+    Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+    Accept: "application/vnd.github+json",
+  },
+  })
+
+  
 
   if (!response.ok) {
     throw new Error("Failed to fetch repositories")
