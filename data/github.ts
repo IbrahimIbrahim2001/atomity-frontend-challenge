@@ -1,4 +1,5 @@
 import type { Repository } from "@/types/repository"
+import { cacheLife } from "next/cache"
 
 const GITHUB_API_URL = "https://api.github.com/repositories"
 
@@ -20,9 +21,11 @@ interface GitHubRepository {
 }
 
 export const getRepositories = async (): Promise<Repository[]> => {
-  const response = await fetch(GITHUB_API_URL, {
-    next: { revalidate: 3600 },
-  })
+   "use cache"
+
+  cacheLife("hours")
+
+  const response = await fetch(GITHUB_API_URL)
 
   if (!response.ok) {
     throw new Error("Failed to fetch repositories")
